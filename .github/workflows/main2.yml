@@ -1,13 +1,13 @@
 name: Unzip Texture Pack
 
 on:
-  issues:
-    types: [opened, edited]
+  issue_comment:
+    types: [created]
 
 jobs:
   unzip:
-    if: contains(github.event.comment.body, '!accept')
     runs-on: ubuntu-latest
+    if: contains(github.event.comment.body, '!accept')
 
     steps:
       - name: Checkout code
