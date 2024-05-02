@@ -6,7 +6,7 @@ on:
 
 jobs:
   create_folder_and_unzip:
-    if: github.event.comment.body == '!accept'
+    if: contains(github.event.comment.body, '!accept')
     runs-on: ubuntu-latest
     steps:
       - name: Obtener datos del issue
@@ -23,10 +23,13 @@ jobs:
 
             lines.forEach(line => {
               if (line.startsWith('### Texture Pack Name')) {
-                texturePackName = line.split(':')[1].trim();
+                const parts = line.split(':');
+                texturePackName = parts.length > 1 ? parts[1].trim() : '';
               }
               if (line.startsWith('### Drag file here')) {
-                downloadLink = line.split('(')[1].split(')')[0];
+                const linkStartIndex = line.indexOf('(') + 1;
+                const linkEndIndex = line.indexOf(')');
+                downloadLink = line.substring(linkStartIndex, linkEndIndex);
               }
             });
 
