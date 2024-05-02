@@ -1,0 +1,29 @@
+name: Unzip Texture Pack
+
+on:
+  issues:
+    types: [opened]
+
+jobs:
+  unzip:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.x'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install zipfile36
+
+      - name: Unzip texture pack
+        run: |
+          mkdir -p "$GITHUB_WORKSPACE/Texture_Packs"
+          mkdir -p "$GITHUB_WORKSPACE/Texture_Packs/${{ github.event.issue.body | from_json | where: 'id', 'texture_pack_name' | first }}"
+          python -c "import zipfile; zipfile.ZipFile('$GITHUB_EVENT_PATH/${{ github.event.issue.body | from_json | where: 'id', 'texture_pack_file' | first }}').extractall('$GITHUB_WORKSPACE/Texture_Packs/${{ github.event.issue.body | from_json | where: 'id', 'texture_pack_name' | first }}')"
