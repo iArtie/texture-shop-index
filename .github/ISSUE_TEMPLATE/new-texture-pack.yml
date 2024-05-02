@@ -6,10 +6,6 @@ projects: ["octo-org/1", "octo-org/44"]
 assignees:
   - octocat
 body:
-  - type: markdown
-    attributes:
-      value: |
-        
   - type: input
     id: texture_pack_name
     attributes:
