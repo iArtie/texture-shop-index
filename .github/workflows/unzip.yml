@@ -24,6 +24,9 @@ jobs:
           echo "Texture Pack Name: $TEXTURE_PACK_NAME"
           echo "Download Link: $DOWNLOAD_LINK"
 
+          # Verificar el valor de TEXTURE_PACK_NAME antes de crear la carpeta
+          echo "Valor de TEXTURE_PACK_NAME: $TEXTURE_PACK_NAME"
+
           # Crear carpeta, descargar y descomprimir archivos
           mkdir "$TEXTURE_PACK_NAME"
           wget -O temp.zip "$DOWNLOAD_LINK"
