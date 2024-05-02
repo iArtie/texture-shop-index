@@ -1,11 +1,12 @@
 name: Crear Carpeta y Descomprimir
 
 on:
-  issues:
-    types: [opened]
+  issue_comment:
+    types: [created]
 
 jobs:
   create_folder_and_unzip:
+    if: github.event.comment.body == '!accept'
     runs-on: ubuntu-latest
     steps:
       - name: Obtener datos del issue
