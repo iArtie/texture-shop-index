@@ -24,12 +24,13 @@ jobs:
             let texturePackName = '';
             let downloadLink = '';
 
+            // Buscar las etiquetas en el cuerpo del issue
             issue.body.split('\n').forEach(line => {
-              if (line.startsWith('### Texture Pack Name')) {
-                texturePackName = line.split(':')[1].trim();
+              if (line.includes('[Texture Pack Name]')) {
+                texturePackName = line.replace('[Texture Pack Name]', '').trim();
               }
-              if (line.startsWith('### Drag file here')) {
-                downloadLink = line.split('(')[1].split(')')[0];
+              if (line.includes('[Download Link]')) {
+                downloadLink = line.replace('[Download Link]', '').trim();
               }
             });
 
