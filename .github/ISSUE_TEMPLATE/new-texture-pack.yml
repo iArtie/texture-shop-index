@@ -34,7 +34,7 @@ body:
       pattern: "^(v\\d+\\.\\d+\\.\\d+)$"
       message: "Please enter a version in the format v1.0.0 (numbers only)."
  - type: textarea
-    id: Drag_file
+    id: drag
     attributes:
       label: Drag file
       description: Drag or add texture pack file! (.zip only)
