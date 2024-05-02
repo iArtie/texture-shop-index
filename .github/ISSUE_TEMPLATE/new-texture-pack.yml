@@ -2,9 +2,6 @@ name: Texture Pack
 description: Create a new texture pack request.
 title: "[Texture Pack]: "
 labels: ["enhancement"]
-projects: ["octo-org/1", "octo-org/44"]
-assignees:
-  - octocat
 body:
   - type: markdown
     attributes:
