@@ -33,9 +33,3 @@ body:
       required: true
       pattern: "^(v\\d+\\.\\d+\\.\\d+)$"
       message: "Please enter a version in the format v1.0.0 (numbers only)."
-- type: file_upload
-  id: file
-  attributes:
-    label: Drag file here
-  validations:
-    required: true
