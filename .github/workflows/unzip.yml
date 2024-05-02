@@ -1,19 +1,44 @@
 name: Crear Carpeta y Descomprimir
 
 on:
-  push:
-    branches:
-      - main
+  issues:
+    types: [opened]
 
 jobs:
   create_folder_and_unzip:
     runs-on: ubuntu-latest
     steps:
+      - name: Obtener datos del issue
+        id: extract_data
+        uses: actions/github-script@v4
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const issue = context.payload.issue;
+            const description = issue.body;
+            const lines = description.split('\n');
+            let texturePackName = '';
+            let downloadLink = '';
+
+            lines.forEach(line => {
+              if (line.startsWith('### Texture Pack Name')) {
+                texturePackName = line.split(':')[1].trim();
+              }
+              if (line.startsWith('### Drag file here')) {
+                downloadLink = line.split('(')[1].split(')')[0];
+              }
+            });
+
+            console.log(`Texture Pack Name: ${texturePackName}`);
+            console.log(`Download Link: ${downloadLink}`);
+
+            return { texturePackName, downloadLink };
+
       - name: Crear carpeta
-        run: mkdir ${{ github.workspace }}/${{ github.event.inputs.texture_pack_name }}
+        run: mkdir ${{ steps.extract_data.outputs.texturePackName }}
 
       - name: Descargar y descomprimir archivos
         run: |
-          wget -O temp.zip ${{ github.event.inputs.download_link }}
-          unzip temp.zip -d ${{ github.workspace }}/${{ github.event.inputs.texture_pack_name }}
+          wget -O temp.zip ${{ steps.extract_data.outputs.downloadLink }}
+          unzip temp.zip -d ${{ steps.extract_data.outputs.texturePackName }}
         working-directory: ${{ github.workspace }}
