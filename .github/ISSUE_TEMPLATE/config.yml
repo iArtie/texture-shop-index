@@ -6,8 +6,9 @@ contact_links:
   - name: GitHub Security Bug Bounty
     url: https://bounty.github.com/
     about: Please report security vulnerabilities here.
+
 preset_config:
-  - name: "new-texture-pack.md"
+  - name: "new-texture-pack"
     content: |
       ### Texture Pack Name
       **Descripción:**
