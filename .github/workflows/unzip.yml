@@ -1,40 +1,38 @@
-name: Extract Texture Pack
+name: Crear Carpeta y Descomprimir
 
 on:
   issue_comment:
-    types: [created]  # Se activa cuando se crea un comentario en una issue
+    types: [created]
 
 jobs:
-  extract_texture_pack:
+  create_folder_and_unzip:
+    if: contains(github.event.comment.body, '!accept')
     runs-on: ubuntu-latest
-
     steps:
-    - name: Check if comment triggers workflow
-      if: github.event.comment.body == '!accept'  # Verifica si el comentario es '!accept'
-      run: |
-        issue_number=$(echo "$GITHUB_EVENT_PATH" | jq -r '.issue.number')
-        echo "Workflow triggered by comment on issue #$issue_number"
-        curl -s "https://api.github.com/repos/$GITHUB_REPOSITORY/issues/$issue_number" | grep "\"body\":"
-      else:
-        echo "No action needed"
-        exit 0
+      - name: Obtener datos del issue
+        id: extract_data
+        run: |
+          # Obtener el cuerpo del issue y filtrar la línea con "body"
+          ISSUE_BODY=$(curl -s "https://api.github.com/repos/iArtie/texture-shop-index/issues/1" | grep -oP '\"body\": \"### Texture Pack Name\\n\\n\K.*?(?=\\n\\n)\"')
 
-    - name: Checkout repository
-      uses: actions/checkout@v2
+          # Extraer el Texture Pack Name y el Download Link
+          TEXTURE_PACK_NAME=$(echo "$ISSUE_BODY" | grep -oP '(?<=### Texture Pack Name\\n\\n)[^\n]+')
+          DOWNLOAD_LINK=$(echo "$ISSUE_BODY" | grep -oP '(?<=### Drag file here\\n\\n\[Link\]\()[^\)]+')
 
-    - name: Extract Texture Pack
-      run: |
-        body=$(curl -s "https://api.github.com/repos/$GITHUB_REPOSITORY/issues/$issue_number" | grep "\"body\":")
-        tpname=$(echo "$body" | grep -oP '(?<=### Texture Pack Name\n\n)[^\n\r]+')
-        zip_url=$(echo "$body" | grep -oP '(?<=### Drag file here\n\n\[.*\]\()(.*)(?=\))')
-        wget -O texture_pack.zip $zip_url
-        unzip -q texture_pack.zip -d $tpname
-        rm texture_pack.zip
+          echo "Texture Pack Name: $TEXTURE_PACK_NAME"
+          echo "Download Link: $DOWNLOAD_LINK"
 
-    - name: Commit and push changes
-      run: |
-        git config --local user.email "action@github.com"
-        git config --local user.name "GitHub Action"
-        git add .
-        git commit -m "Extracted Texture Pack"
-        git push
+          # Verificar el valor de TEXTURE_PACK_NAME antes de crear la carpeta
+          echo "Valor de TEXTURE_PACK_NAME: $TEXTURE_PACK_NAME"
+
+          # Crear carpeta, descargar y descomprimir archivos
+          mkdir "$TEXTURE_PACK_NAME"
+          wget -O temp.zip "$DOWNLOAD_LINK"
+          unzip temp.zip -d "$TEXTURE_PACK_NAME"
+
+      - name: Confirmar cambios
+        run: |
+          git add .
+          git commit -m "Add Texture Pack: $TEXTURE_PACK_NAME"
+          git push origin HEAD
+        working-directory: ${{ github.workspace }}
