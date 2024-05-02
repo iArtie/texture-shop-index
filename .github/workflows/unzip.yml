@@ -1,33 +1,19 @@
-name: Unzip Texture Pack
+name: Crear Carpeta y Descomprimir
 
 on:
-  issue_comment:
-    types: [created]
+  push:
+    branches:
+      - main
 
 jobs:
-  unzip:
+  create_folder_and_unzip:
     runs-on: ubuntu-latest
-    if: contains(github.event.comment.body, '!accept')
-
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
+      - name: Crear carpeta
+        run: mkdir ${{ github.workspace }}/${{ github.event.inputs.texture_pack_name }}
 
-      - name: Set up Python
-        uses: actions/setup-python@v2
-        with:
-          python-version: '3.x'
-
-      - name: Install dependencies
+      - name: Descargar y descomprimir archivos
         run: |
-          python -m pip install --upgrade pip
-          pip install zipfile36
-
-      - name: Unzip texture pack
-        run: |
-          # mkdir -p "$GITHUB_WORKSPACE/Texture_Packs"
-          # mkdir -p "$GITHUB_WORKSPACE/Texture_Packs/{{ fromJson(github.event.issue.body).issue.texture_pack_name }}"
-          # python -c "import zipfile; zipfile.ZipFile('$GITHUB_EVENT_PATH/{{ fromJson(github.event.issue.body).issue.texture_pack_file }}').extractall('$GITHUB_WORKSPACE/Texture_Packs/{{ fromJson(github.event.issue.body).issue.texture_pack_name }}')"
-        env:
-          TEXTURE_PACK_NAME: ${{ fromJson(github.event.issue.body).issue.texture_pack_name }}
-          TEXTURE_PACK_FILE: ${{ fromJson(github.event.issue.body).issue.texture_pack_file }}
+          wget -O temp.zip ${{ github.event.inputs.download_link }}
+          unzip temp.zip -d ${{ github.workspace }}/${{ github.event.inputs.texture_pack_name }}
+        working-directory: ${{ github.workspace }}
