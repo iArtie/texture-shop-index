@@ -9,7 +9,7 @@ body:
   - type: markdown
     attributes:
       value: |
-        Thanks for submitting your texture pack request!
+        
   - type: input
     id: texture_pack_name
     attributes:
