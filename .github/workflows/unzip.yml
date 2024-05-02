@@ -26,8 +26,8 @@ jobs:
       - name: Unzip texture pack
         run: |
           mkdir -p "$GITHUB_WORKSPACE/Texture_Packs"
-          mkdir -p "$GITHUB_WORKSPACE/Texture_Packs/${{ fromJson(github.event.issue.body).issue.texture_pack_name }}"
-          python -c "import zipfile; zipfile.ZipFile('$GITHUB_EVENT_PATH/${{ fromJson(github.event.issue.body).issue.texture_pack_file }}').extractall('$GITHUB_WORKSPACE/Texture_Packs/${{ fromJson(github.event.issue.body).issue.texture_pack_name }}')"
+          mkdir -p "$GITHUB_WORKSPACE/Texture_Packs/{{ fromJson(github.event.issue.body).issue.texture_pack_name }}"
+          python -c "import zipfile; zipfile.ZipFile('$GITHUB_EVENT_PATH/{{ fromJson(github.event.issue.body).issue.texture_pack_file }}').extractall('$GITHUB_WORKSPACE/Texture_Packs/{{ fromJson(github.event.issue.body).issue.texture_pack_name }}')"
         env:
           TEXTURE_PACK_NAME: ${{ fromJson(github.event.issue.body).issue.texture_pack_name }}
           TEXTURE_PACK_FILE: ${{ fromJson(github.event.issue.body).issue.texture_pack_file }}
