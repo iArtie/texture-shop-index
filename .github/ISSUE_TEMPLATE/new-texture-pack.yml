@@ -1,6 +1,6 @@
 name: Texture Pack
 description: Create a new texture pack request.
-title: "[Texture Pack]: "
+title: ""
 labels: ["enhancement"]
 body:
   - type: markdown
@@ -15,7 +15,7 @@ body:
       placeholder: My Awesome Texture Pack
     validations:
       required: true
-  - type: textarea
+  - type: input
     id: description
     attributes:
       label: Description
@@ -33,3 +33,11 @@ body:
       required: true
       pattern: "^(v\\d+\\.\\d+\\.\\d+)$"
       message: "Please enter a version in the format v1.0.0 (numbers only)."
+ - type: textarea
+    id: Drag_file
+    attributes:
+      label: Drag file
+      description: Drag or add texture pack file! (.zip only)
+      placeholder: Add your file here
+    validations:
+      required: true
