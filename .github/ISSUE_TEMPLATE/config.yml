@@ -6,3 +6,16 @@ contact_links:
   - name: GitHub Security Bug Bounty
     url: https://bounty.github.com/
     about: Please report security vulnerabilities here.
+preset_config:
+  - name: "new-texture-pack.md"
+    content: |
+      ### Texture Pack Name
+      **Descripción:**
+      [Describe brevemente el nombre del Texture Pack aquí]
+
+      ### Version
+      **Versión:**
+      [Indica la versión del Texture Pack]
+
+      ### Drag yui file here
+      [Arrastra y suelta el archivo YUI aquí para subirlo]
