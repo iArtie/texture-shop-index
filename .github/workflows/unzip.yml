@@ -21,18 +21,15 @@ jobs:
               issue_number: context.issue.number
             });
 
-            const lines = issue.body.split('\n');
             let texturePackName = '';
             let downloadLink = '';
 
-            lines.forEach(line => {
+            issue.body.split('\n').forEach(line => {
               if (line.startsWith('### Texture Pack Name')) {
                 texturePackName = line.split(':')[1].trim();
               }
               if (line.startsWith('### Drag file here')) {
-                const linkStartIndex = line.indexOf('(') + 1;
-                const linkEndIndex = line.indexOf(')');
-                downloadLink = line.substring(linkStartIndex, linkEndIndex);
+                downloadLink = line.split('(')[1].split(')')[0];
               }
             });
 
