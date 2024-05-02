@@ -30,5 +30,8 @@ jobs:
           unzip temp.zip -d "$TEXTURE_PACK_NAME"
 
       - name: Confirmar cambios
-        run: git add . && git commit -m "Add Texture Pack: $TEXTURE_PACK_NAME" && git push origin HEAD
+        run: |
+          git add .
+          git commit -m "Add Texture Pack: $TEXTURE_PACK_NAME"
+          git push origin HEAD
         working-directory: ${{ github.workspace }}
