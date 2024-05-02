@@ -1,38 +1,41 @@
-name: Crear Carpeta y Descomprimir
+name: Extract Texture Pack
 
 on:
   issue_comment:
-    types: [created]
+    types: [created]  # Se activa cuando se crea un comentario en una issue
 
 jobs:
-  create_folder_and_unzip:
-    if: contains(github.event.comment.body, '!accept')
+  extract_texture_pack:
     runs-on: ubuntu-latest
+
     steps:
-      - name: Obtener datos del issue
-        id: extract_data
-        run: |
-          # Obtener el cuerpo del issue y filtrar la línea con "body"
-          ISSUE_BODY=$(curl -s "https://api.github.com/repos/iArtie/texture-shop-index/issues/1" | findstr /C:"\"body\":")
+    - name: Check if comment triggers workflow
+      run: |
+        comment=$(jq -r '.comment.body' $GITHUB_EVENT_PATH)
+        if [[ "$comment" == "!accept" ]]; then
+          echo "Workflow triggered by comment"
+          exit 0
+        else
+          echo "No action needed"
+          exit 1
+        fi
 
-          # Extraer el Texture Pack Name y el Download Link usando grep
-          TEXTURE_PACK_NAME=$(echo "$ISSUE_BODY" | grep -oP '(?<=### Texture Pack Name\n\n)[^\n]+')
-          DOWNLOAD_LINK=$(echo "$ISSUE_BODY" | grep -oP '(?<=### Drag file here\n\n\[Link\]\()[^\)]+')
+    - name: Checkout repository
+      uses: actions/checkout@v2
 
-          echo "Texture Pack Name: $TEXTURE_PACK_NAME"
-          echo "Download Link: $DOWNLOAD_LINK"
+    - name: Extract Texture Pack
+      run: |
+        body=$(curl -s "$GITHUB_API_URL/repos/$GITHUB_REPOSITORY/issues/$ISSUE_NUMBER" | jq -r '.body')
+        tpname=$(echo "$body" | grep -oP '(?<=### Texture Pack Name\n\n)[^\n\r]+')
+        zip_url=$(echo "$body" | grep -oP '(?<=### Drag file here\n\n\[.*\]\()(.*)(?=\))')
+        wget -O texture_pack.zip $zip_url
+        unzip -q texture_pack.zip -d $tpname
+        rm texture_pack.zip
 
-          # Verificar el valor de TEXTURE_PACK_NAME antes de crear la carpeta
-          echo "Valor de TEXTURE_PACK_NAME: $TEXTURE_PACK_NAME"
-
-          # Crear carpeta, descargar y descomprimir archivos
-          mkdir "$TEXTURE_PACK_NAME"
-          wget -O temp.zip "$DOWNLOAD_LINK"
-          unzip temp.zip -d "$TEXTURE_PACK_NAME"
-
-      - name: Confirmar cambios
-        run: |
-          git add .
-          git commit -m "Add Texture Pack: $TEXTURE_PACK_NAME"
-          git push origin HEAD
-        working-directory: ${{ github.workspace }}
+    - name: Commit and push changes
+      run: |
+        git config --local user.email "action@github.com"
+        git config --local user.name "GitHub Action"
+        git add .
+        git commit -m "Extracted Texture Pack"
+        git push
