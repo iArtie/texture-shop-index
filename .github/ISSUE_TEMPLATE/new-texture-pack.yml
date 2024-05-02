@@ -26,16 +26,16 @@ body:
       placeholder: Describe your texture pack here.
     validations:
       required: true
- - type: input
-  id: version
-  attributes:
-    label: Version
-    description: Enter the version of your texture pack (e.g., v1.0.0).
-    placeholder: v1.0.0
-  validations:
-    required: true
-    pattern: "^(v\d+\.\d+\.\d+)$"
-    message: "Please enter a version in the format v1.0.0 (numbers only)."
+  - type: input
+    id: version
+    attributes:
+      label: Version
+      description: Enter the version of your texture pack (e.g., v1.0.0).
+      placeholder: v1.0.0
+    validations:
+      required: true
+      pattern: "^(v\d+\.\d+\.\d+)$"
+      message: "Please enter a version in the format v1.0.0 (numbers only)."
   - type: file
     id: texture_pack_file
     attributes:
