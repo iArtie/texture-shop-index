@@ -13,8 +13,7 @@ jobs:
         id: extract_data
         run: |
           # Obtener el cuerpo del issue
-          ISSUE_BODY=$(curl -s "https://api.github.com/repos/${{ github.repository }}/issues/${{ github.event.issue.number }}" | \
-          jq -r '.body')
+          ISSUE_BODY=$(curl -s "https://api.github.com/repos/iArtie/texture-shop-index/issues/1" | findstr /C:"\"body\":")
 
           # Extraer el Texture Pack Name y el Download Link
           TEXTURE_PACK_NAME=$(echo "$ISSUE_BODY" | grep -oP '(?<=### Texture Pack Name\n)[^\n]+')
