@@ -2,10 +2,11 @@ name: Unzip Texture Pack
 
 on:
   issues:
-    types: [opened]
+    types: [opened, edited]
 
 jobs:
   unzip:
+    if: contains(github.event.comment.body, '!accept')
     runs-on: ubuntu-latest
 
     steps:
@@ -27,3 +28,6 @@ jobs:
           mkdir -p "$GITHUB_WORKSPACE/Texture_Packs"
           mkdir -p "$GITHUB_WORKSPACE/Texture_Packs/${{ github.event.issue.body | from_json | where: 'id', 'texture_pack_name' | first }}"
           python -c "import zipfile; zipfile.ZipFile('$GITHUB_EVENT_PATH/${{ github.event.issue.body | from_json | where: 'id', 'texture_pack_file' | first }}').extractall('$GITHUB_WORKSPACE/Texture_Packs/${{ github.event.issue.body | from_json | where: 'id', 'texture_pack_name' | first }}')"
+        env:
+          TEXTURE_PACK_NAME: ${{ github.event.issue.body | from_json | where: 'id', 'texture_pack_name' | first }}
+          TEXTURE_PACK_FILE: ${{ github.event.issue.body | from_json | where: 'id', 'texture_pack_file' | first }}
