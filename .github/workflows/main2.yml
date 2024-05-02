@@ -29,5 +29,5 @@ jobs:
           mkdir -p "$GITHUB_WORKSPACE/Texture_Packs/${{ github.event.issue.body | from_json('id') | first }}"
           python -c "import zipfile; zipfile.ZipFile('$GITHUB_EVENT_PATH/${{ github.event.issue.body | from_json('id') | first }}').extractall('$GITHUB_WORKSPACE/Texture_Packs/${{ github.event.issue.body | from_json('id') | first }}')"
         env:
-          TEXTURE_PACK_NAME: ${{ github.event.issue.body | from_json('id') | first }}
-          TEXTURE_PACK_FILE: ${{ github.event.issue.body | from_json('id') | first }}
+          TEXTURE_PACK_NAME: ${{ github.event.issue.body | from_json | selectattr('id', '==', 'texture_pack_name') | map(attribute='value') | first }}
+          TEXTURE_PACK_FILE: ${{ github.event.issue.body | from_json | selectattr('id', '==', 'texture_pack_file') | map(attribute='value') | first }}
