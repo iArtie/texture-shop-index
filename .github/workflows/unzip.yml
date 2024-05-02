@@ -10,22 +10,21 @@ jobs:
 
     steps:
     - name: Check if comment triggers workflow
+      if: github.event.comment.body == '!accept'  # Verifica si el comentario es '!accept'
       run: |
-        comment=$(jq -r '.comment.body' $GITHUB_EVENT_PATH)
-        if [[ "$comment" == "!accept" ]]; then
-          echo "Workflow triggered by comment"
-          exit 0
-        else
-          echo "No action needed"
-          exit 1
-        fi
+        issue_number=$(echo "$GITHUB_EVENT_PATH" | jq -r '.issue.number')
+        echo "Workflow triggered by comment on issue #$issue_number"
+        curl -s "https://api.github.com/repos/$GITHUB_REPOSITORY/issues/$issue_number" | grep "\"body\":"
+      else:
+        echo "No action needed"
+        exit 0
 
     - name: Checkout repository
       uses: actions/checkout@v2
 
     - name: Extract Texture Pack
       run: |
-        body=$(curl -s "$GITHUB_API_URL/repos/$GITHUB_REPOSITORY/issues/$ISSUE_NUMBER" | jq -r '.body')
+        body=$(curl -s "https://api.github.com/repos/$GITHUB_REPOSITORY/issues/$issue_number" | grep "\"body\":")
         tpname=$(echo "$body" | grep -oP '(?<=### Texture Pack Name\n\n)[^\n\r]+')
         zip_url=$(echo "$body" | grep -oP '(?<=### Drag file here\n\n\[.*\]\()(.*)(?=\))')
         wget -O texture_pack.zip $zip_url
