@@ -11,39 +11,24 @@ jobs:
     steps:
       - name: Obtener datos del issue
         id: extract_data
-        uses: actions/github-script@v4
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          script: |
-            const { data: issue } = await github.issues.get({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              issue_number: context.issue.number
-            });
-
-            let texturePackName = '';
-            let downloadLink = '';
-
-            // Buscar las etiquetas en el cuerpo del issue
-            issue.body.split('\n').forEach(line => {
-              if (line.includes('[Texture Pack Name]')) {
-                texturePackName = line.replace('[Texture Pack Name]', '').trim();
-              }
-              if (line.includes('[Download Link]')) {
-                downloadLink = line.replace('[Download Link]', '').trim();
-              }
-            });
-
-            console.log(`Texture Pack Name: ${texturePackName}`);
-            console.log(`Download Link: ${downloadLink}`);
-
-            return { texturePackName, downloadLink };
-
-      - name: Crear carpeta
-        run: mkdir ${{ steps.extract_data.outputs.texturePackName }}
-
-      - name: Descargar y descomprimir archivos
         run: |
-          wget -O temp.zip ${{ steps.extract_data.outputs.downloadLink }}
-          unzip temp.zip -d ${{ steps.extract_data.outputs.texturePackName }}
+          # Obtener el cuerpo del issue
+          ISSUE_BODY=$(curl -s -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+          "https://api.github.com/repos/${{ github.repository }}/issues/${{ github.event.issue.number }}" | \
+          jq -r '.body')
+
+          # Extraer el Texture Pack Name y el Download Link
+          TEXTURE_PACK_NAME=$(echo "$ISSUE_BODY" | grep -oP '(?<=### Texture Pack Name\n)[^\n]+')
+          DOWNLOAD_LINK=$(echo "$ISSUE_BODY" | grep -oP '(?<=### Drag file here\n\[Link\]\()[^\)]+')
+
+          echo "Texture Pack Name: $TEXTURE_PACK_NAME"
+          echo "Download Link: $DOWNLOAD_LINK"
+
+          # Crear carpeta, descargar y descomprimir archivos
+          mkdir "$TEXTURE_PACK_NAME"
+          wget -O temp.zip "$DOWNLOAD_LINK"
+          unzip temp.zip -d "$TEXTURE_PACK_NAME"
+
+      - name: Confirmar cambios
+        run: git add . && git commit -m "Add Texture Pack: $TEXTURE_PACK_NAME" && git push origin HEAD
         working-directory: ${{ github.workspace }}
