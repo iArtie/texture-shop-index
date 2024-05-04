@@ -1,38 +1,39 @@
-name: Crear Carpeta y Descomprimir
+name: Procesar archivo de issue
 
 on:
   issue_comment:
     types: [created]
 
 jobs:
-  create_folder_and_unzip:
-    if: contains(github.event.comment.body, '!accept')
+  procesar-archivo:
     runs-on: ubuntu-latest
     steps:
-      - name: Obtener datos del issue
-        id: extract_data
+      - name: Checkout código
+        uses: actions/checkout@v2
+
+      - name: Verificar comentario "!accept"
+        id: verificar-comentario
         run: |
-          # Obtener el cuerpo del issue y filtrar la línea con "body"
-          ISSUE_BODY=$(curl -s "https://api.github.com/repos/iArtie/texture-shop-index/issues/1" | grep -oP '\"body\": \"### Texture Pack Name\\n\\n\K.*?(?=\\n\\n)\"')
+          comentario=$(jq -r .comment.body "${GITHUB_EVENT_PATH}")
+          if [[ "$comentario" == "!accept" ]]; then
+            echo "::set-output name=accept::true"
+          else
+            echo "::set-output name=accept::false"
+          fi
 
-          # Extraer el Texture Pack Name y el Download Link
-          TEXTURE_PACK_NAME=$(echo "$ISSUE_BODY" | grep -oP '(?<=### Texture Pack Name\\n\\n)[^\n]+')
-          DOWNLOAD_LINK=$(echo "$ISSUE_BODY" | grep -oP '(?<=### Drag file here\\n\\n\[Link\]\()[^\)]+')
-
-          echo "Texture Pack Name: $TEXTURE_PACK_NAME"
-          echo "Download Link: $DOWNLOAD_LINK"
-
-          # Verificar el valor de TEXTURE_PACK_NAME antes de crear la carpeta
-          echo "Valor de TEXTURE_PACK_NAME: $TEXTURE_PACK_NAME"
-
-          # Crear carpeta, descargar y descomprimir archivos
-          mkdir "$TEXTURE_PACK_NAME"
-          wget -O temp.zip "$DOWNLOAD_LINK"
-          unzip temp.zip -d "$TEXTURE_PACK_NAME"
-
-      - name: Confirmar cambios
+      - name: Obtener nombre de archivo y descargar
+        if: steps.verificar-comentario.outputs.accept == 'true'
+        id: obtener-archivo
         run: |
-          git add .
-          git commit -m "Add Texture Pack: $TEXTURE_PACK_NAME"
-          git push origin HEAD
-        working-directory: ${{ github.workspace }}
+          archivo=$(awk '/^### Drag file here/ {print $NF}' ${{ github.event.issue.body }})
+          curl -o "$archivo" "$(awk '/^### Drag file here/ {print $NF}' ${{ github.event.issue.body }} | sed 's/.*(//;s/).*//')"
+
+      - name: Crear carpeta "Texture Packs" si no existe
+        if: steps.verificar-comentario.outputs.accept == 'true'
+        run: |
+          mkdir -p "Texture Packs"
+
+      - name: Mover archivo a "Texture Packs"
+        if: steps.verificar-comentario.outputs.accept == 'true'
+        run: |
+          mv "${{ steps.obtener-archivo.outputs.archivo }}" "Texture Packs/"
