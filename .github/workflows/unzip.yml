@@ -14,21 +14,16 @@ jobs:
       - name: Verificar comentario "!accept"
         id: verificar-comentario
         run: |
-          comentario=$(jq -r .comment.body "${GITHUB_EVENT_PATH}")
-          if [[ "$comentario" == "!accept" ]]; then
-            echo "::set-output name=accept::true"
-          else
-            echo "::set-output name=accept::false"
-          fi
+          echo result="python verify_staff.py ${{ github.event.comment.user.login }}" >> $GITHUB_OUTPUT
 
       - name: Setup Python
-        if: steps.verificar-comentario.outputs.accept == 'true'
+        if: steps.verificar-comentario.outputs.result == 'Yes' && github.event.comment.body == '!accept'
         uses: actions/setup-python@v5
         with:
           python-version: '3.11' 
 
       - name: Setup bot
-        if: steps.verificar-comentario.outputs.accept == 'true'
+        if: steps.verificar-comentario.outputs.result == 'Yes' && github.event.comment.body == '!accept'
         run: |
           pip install requests
           python test_bot.py
