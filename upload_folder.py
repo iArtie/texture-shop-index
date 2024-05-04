@@ -1,4 +1,5 @@
 from io import BytesIO
+from urllib.parse import urlparse
 import os
 import zipfile
 import re
@@ -27,7 +28,8 @@ with zipfile.ZipFile(BytesIO(req.content)) as zip_ref:
         if folders_list[0] != re.match(r"^[^/]+/$", folders_list[0]):
             zip_ref.extractall("packs")
     except IndexError:
-        folder = f"packs/{filename.replace('.zip', '')}"
+        file_name = urlparse(url).path.split("/")[-1]
+        folder = f"packs/{file_name.replace('.zip', '')}"
         if not os.path.exists(folder):
             os.mkdir(folder)
         
