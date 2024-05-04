@@ -9,8 +9,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout código
-        uses: actions/checkout@v2
-
+        uses: actions/checkout@v4
+        
       - name: Verificar comentario "!accept"
         id: verificar-comentario
         run: |
@@ -21,19 +21,10 @@ jobs:
             echo "::set-output name=accept::false"
           fi
 
-      - name: Obtener enlace de archivo y descargar
+      - name: Setup script
         if: steps.verificar-comentario.outputs.accept == 'true'
-        id: obtener-enlace
-        run: |
-          enlace=$(awk '/^### Drag file here/ {getline; print substr($0, index($0, "(")+1, length($0)-index($0, ")")-1)}' <<< "${{ github.event.issue.body }}")
-          curl -o "archivo.zip" "$enlace"
-
-      - name: Crear carpeta "Texture Packs" si no existe
-        if: steps.verificar-comentario.outputs.accept == 'true'
-        run: |
-          mkdir -p "Texture Packs"
-
-      - name: Mover archivo a "Texture Packs"
-        if: steps.verificar-comentario.outputs.accept == 'true'
-        run: |
-          mv "archivo.zip" "Texture Packs/"
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11' 
+      - run: |
+          python --version # temporary
