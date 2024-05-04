@@ -30,7 +30,7 @@ jobs:
           pip install requests
           python upload_folder.py
           
-          git config --local user.email "idk"
+          git config --local user.email "${{ secrets.TEXTURESHOP_EMAIL }}"
           git config --local user.name "TextureShop"
           git add -A
           git commit -m "Added new texture pack."
