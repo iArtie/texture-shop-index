@@ -1,4 +1,4 @@
-name: Procesar archivo de issue
+name: Verified
 
 on:
   issue_comment:
