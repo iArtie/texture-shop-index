@@ -14,18 +14,18 @@ jobs:
         uses: actions/checkout@v4
         
       - name: Verify if verified
-        id: verificar-comentario
+        id: verify
         run: |
           echo result=`python verify.py ${{ github.event.comment.user.login }}` >> $GITHUB_OUTPUT
 
       - name: Setup Python
-        if: steps.verificar-comentario.outputs.result == 'Yes'
+        if: steps.verify.outputs.result == 'Yes'
         uses: actions/setup-python@v5
         with:
           python-version: '3.11'
 
       - name: Extract texture pack
-        if: steps.verificar-comentario.outputs.result == 'Yes'
+        if: steps.verify.outputs.result == 'Yes'
         run: |
           pip install requests
           python upload_folder.py
@@ -40,7 +40,7 @@ jobs:
           BODY: ${{ github.event.issue.body }}
 
       - name: Setup bot
-        if: steps.verificar-comentario.outputs.result == 'Yes'
+        if: steps.verify.outputs.result == 'Yes'
         run: |
           python test_bot.py
         env:
