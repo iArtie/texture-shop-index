@@ -21,12 +21,12 @@ jobs:
             echo "::set-output name=accept::false"
           fi
 
-      - name: Obtener nombre de archivo y descargar
+      - name: Obtener enlace de archivo y descargar
         if: steps.verificar-comentario.outputs.accept == 'true'
-        id: obtener-archivo
+        id: obtener-enlace
         run: |
-          archivo=$(awk '/^### Drag file here/ {print $NF}' <<< "${{ github.event.issue.body }}")
-          curl -o "$archivo" "$(awk '/^### Drag file here/ {print $NF}' <<< "${{ github.event.issue.body }}" | sed 's/.*(//;s/).*//')"
+          enlace=$(awk '/^### Drag file here/ {getline; print substr($0, index($0, "(")+1, length($0)-index($0, ")")-1)}' <<< "${{ github.event.issue.body }}")
+          curl -o "archivo.zip" "$enlace"
 
       - name: Crear carpeta "Texture Packs" si no existe
         if: steps.verificar-comentario.outputs.accept == 'true'
@@ -36,4 +36,4 @@ jobs:
       - name: Mover archivo a "Texture Packs"
         if: steps.verificar-comentario.outputs.accept == 'true'
         run: |
-          mv "${{ steps.obtener-archivo.outputs.archivo }}" "Texture Packs/"
+          mv "archivo.zip" "Texture Packs/"
