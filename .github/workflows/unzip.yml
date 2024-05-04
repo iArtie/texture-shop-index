@@ -28,5 +28,5 @@ jobs:
           pip install requests
           python test_bot.py
         env:
-          TOKEN: ${{ secrets.TEXTURESHOP_TOKEN }}
+          TOKEN: ${{ secrets.GITHUB_TOKEN }}
           ISSUE_ID: ${{ github.event.issue.number }}
