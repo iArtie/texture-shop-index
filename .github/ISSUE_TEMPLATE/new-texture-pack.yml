@@ -32,11 +32,11 @@ body:
       required: true
       pattern: "^(v\\d+\\.\\d+\\.\\d+)$"
       message: "Please enter a version in the format v1.0.0 (numbers only)."
-  - type: textarea
+  - type: input
     id: texture_pack_file
     attributes:
-      label: Drag file here
+      label: Put your link here
       description: Upload your texture pack file (ZIP format).
-      placeholder: Drag and drop your file here or click to upload.
+      placeholder: Put the direct download link from your texture pack (only 7zip format)
     validations:
       required: true
