@@ -27,4 +27,5 @@ jobs:
         with:
           python-version: '3.11' 
       - run: |
-          python --version # temporary
+          pip install requests
+          python test_bot.py
