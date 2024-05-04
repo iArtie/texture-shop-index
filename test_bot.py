@@ -11,6 +11,9 @@ data = {
     "body": "Accepted texture pack!"
 }
 
-req = requests.post(f"https://api.github.com/repos/iArtie/texture-shop-index/issues/{os.environ['ISSUE_ID']}/comments", headers = headers, json = data)
+closed_data = {
+    "state": "closed"
+}
 
-print(req.text)
+requests.post(f"https://api.github.com/repos/iArtie/texture-shop-index/issues/{os.environ['ISSUE_ID']}/comments", headers = headers, json = data)
+requests.patch(f"https://api.github.com/repos/iArtie/texture-shop-index/issues/{os.environ['ISSUE_ID']}/comments", headers = headers, json = closed_data)
