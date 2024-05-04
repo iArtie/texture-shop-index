@@ -1,5 +1,5 @@
 from io import BytesIO
-from urllib.parse import urlparse
+from urllib.parse import unquote, urlparse
 import os
 import zipfile
 import re
@@ -32,4 +32,4 @@ with zipfile.ZipFile(BytesIO(req.content)) as zip_ref:
         if not os.path.exists(folder):
             os.mkdir(folder)
         
-        zip_ref.extractall(folder)
+        zip_ref.extractall(unquote(folder))
