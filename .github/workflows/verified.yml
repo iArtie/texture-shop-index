@@ -1,0 +1,48 @@
+name: Procesar archivo de issue
+
+on:
+  issue_comment:
+    types: [created]
+
+jobs:
+  procesar-archivo:
+    runs-on: ubuntu-latest
+    permissions: write-all
+      
+    steps:
+      - name: Checkout código
+        uses: actions/checkout@v4
+        
+      - name: Verify if verified
+        id: verificar-comentario
+        run: |
+          echo result=`python verify.py ${{ github.event.comment.user.login }}` >> $GITHUB_OUTPUT
+
+      - name: Setup Python
+        if: steps.verificar-comentario.outputs.result == 'Yes'
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Extract texture pack
+        if: steps.verificar-comentario.outputs.result == 'Yes'
+        run: |
+          pip install requests
+          python upload_folder.py
+          
+          git config --local user.email "${{ secrets.TEXTURESHOP_EMAIL }}"
+          git config --local user.name "TextureShop"
+          git add -A
+          git commit -m "Added new texture pack."
+          git remote set-url origin "https://TextureShop:${{ secrets.TEXTURESHOP_TOKEN }}@github.com/iArtie/texture-shop-index.git"
+          git push -u origin main
+        env:
+          BODY: ${{ github.event.issue.body }}
+
+      - name: Setup bot
+        if: steps.verificar-comentario.outputs.result == 'Yes'
+        run: |
+          python test_bot.py
+        env:
+          TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          ISSUE_ID: ${{ github.event.issue.number }}
