@@ -11,6 +11,6 @@ data = {
     "body": "Accepted texture pack!"
 }
 
-req = requests.post(f"https://api.github.com/repos/iArtie/texture-shop-index/issues/{os.environ['ISSUE_ID']}/comments", headers = headers, data = json.dumps(data))
+req = requests.post(f"https://api.github.com/repos/iArtie/texture-shop-index/issues/{os.environ['ISSUE_ID']}/comments", headers = headers, json = data)
 
 print(req.text)
