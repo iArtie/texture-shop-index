@@ -23,11 +23,10 @@ with zipfile.ZipFile(BytesIO(req.content)) as zip_ref:
             # Extract the matched folder name
             folder_name = folder_match.group()
             folders_list.append(folder_name)
-    
-    try:
-        if folders_list[0] != re.match(r"^[^/]+/$", folders_list[0]):
+
+    if folders_list[0] == re.match(r"^[^/]+/$", folders_list[0]):
             zip_ref.extractall("packs")
-    except IndexError:
+    else:
         file_name = urlparse(url).path.split("/")[-1]
         folder = f"packs/{file_name.replace('.zip', '')}"
         if not os.path.exists(folder):
