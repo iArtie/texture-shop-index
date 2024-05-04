@@ -9,7 +9,6 @@ body:
   - type: textarea
     id: texture_pack_file
     attributes:
-      label: Drag file here
       description: Upload your texture pack file (ZIP format).
       placeholder: Drag and drop your file here or click to upload.
     validations:
