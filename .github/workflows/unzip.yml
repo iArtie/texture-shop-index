@@ -21,11 +21,16 @@ jobs:
             echo "::set-output name=accept::false"
           fi
 
-      - name: Setup script
+      - name: Setup Python
         if: steps.verificar-comentario.outputs.accept == 'true'
         uses: actions/setup-python@v5
         with:
           python-version: '3.11' 
-      - run: |
+
+      - name: Setup bot
+        if: steps.verificar-comentario.outputs.accept == 'true'
+        run: |
           pip install requests
           python test_bot.py
+        env:
+          TOKEN: ${{ secrets.TEXTURESHOP_TOKEN }}
