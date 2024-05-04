@@ -5,7 +5,8 @@ import re
 import requests
 
 folders_list = []
-req = requests.get("temp")
+url = re.search(r'\((.*?)\)', os.environ["BODY"]).group(1)
+req = requests.get(url)
 
 # Open the ZIP file
 with zipfile.ZipFile(BytesIO(req.content)) as zip_ref:
