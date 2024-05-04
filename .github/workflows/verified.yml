@@ -2,7 +2,7 @@ name: Verified
 
 on:
   issues:
-    types: [created]
+    types: [opened]
 
 jobs:
   verified:
