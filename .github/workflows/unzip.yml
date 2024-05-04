@@ -22,12 +22,19 @@ jobs:
         if: steps.verificar-comentario.outputs.result == 'Yes' && github.event.comment.body == '!accept'
         uses: actions/setup-python@v5
         with:
-          python-version: '3.11' 
+          python-version: '3.11'
+
+      - name: Extract texture pack
+        if: steps.verificar-comentario.outputs.result == 'Yes' && github.event.comment.body == '!accept'
+        run: |
+          pip install requests
+          python upload_folder.py
+        env:
+          BODY: ${{ github.event.issue.body }}
 
       - name: Setup bot
         if: steps.verificar-comentario.outputs.result == 'Yes' && github.event.comment.body == '!accept'
         run: |
-          pip install requests
           python test_bot.py
         env:
           TOKEN: ${{ secrets.GITHUB_TOKEN }}
