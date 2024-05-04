@@ -4,8 +4,7 @@ import os
 
 headers = {
     "Accept": "application/vnd.github+json",
-    "Authorization": f"token {os.environ['TOKEN']}",
-    "X-GitHub-Api-Version": "2022-11-28"
+    "Authorization": f"token {os.environ['TOKEN']}"
 }
 
 data = {
