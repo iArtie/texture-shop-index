@@ -16,4 +16,4 @@ closed_data = {
 }
 
 requests.post(f"https://api.github.com/repos/iArtie/texture-shop-index/issues/{os.environ['ISSUE_ID']}/comments", headers = headers, json = data)
-requests.patch(f"https://api.github.com/repos/iArtie/texture-shop-index/issues/{os.environ['ISSUE_ID']}/comments", headers = headers, json = closed_data)
+requests.patch(f"https://api.github.com/repos/iArtie/texture-shop-index/issues/{os.environ['ISSUE_ID']}", headers = headers, json = closed_data)
