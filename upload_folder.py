@@ -4,6 +4,9 @@ import zipfile
 import re
 import requests
 
+if not os.path.exists("packs/"):
+    os.mkdir("packs")
+
 folders_list = []
 url = re.search(r'(https?://\S+)', os.environ["BODY"]).group(1)
 req = requests.get(url)
@@ -22,9 +25,9 @@ with zipfile.ZipFile(BytesIO(req.content)) as zip_ref:
     
     try:
         if folders_list[0] != re.match(r"^[^/]+/$", folders_list[0]):
-            zip_ref.extractall()
+            zip_ref.extractall("packs")
     except IndexError:
-        folder = filename.replace(".zip", "")
+        folder = f"packs/{filename.replace('.zip', '')}"
         if not os.path.exists(folder):
             os.mkdir(folder)
         
