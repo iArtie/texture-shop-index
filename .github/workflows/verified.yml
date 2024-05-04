@@ -16,7 +16,7 @@ jobs:
       - name: Verify if verified
         id: verify
         run: |
-          echo result=`python verify.py ${{ github.event.comment.user.login }}` >> $GITHUB_OUTPUT
+          echo result=`python verify.py ${{ github.event.issue.user.login }}` >> $GITHUB_OUTPUT
 
       - name: Setup Python
         if: steps.verify.outputs.result == 'Yes'
