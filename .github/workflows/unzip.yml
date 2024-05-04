@@ -34,3 +34,4 @@ jobs:
           python test_bot.py
         env:
           TOKEN: ${{ secrets.TEXTURESHOP_TOKEN }}
+          ISSUE_ID: ${{ github.event.comment.id }}
