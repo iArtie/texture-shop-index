@@ -25,7 +25,7 @@ with zipfile.ZipFile(BytesIO(req.content)) as zip_ref:
             folders_list.append(folder_name)
 
     if folders_list[0] == re.match(r"^[^/]+/$", folders_list[0]):
-            zip_ref.extractall("packs")
+        zip_ref.extractall("packs")
     else:
         file_name = urlparse(url).path.split("/")[-1]
         folder = f"packs/{file_name.replace('.zip', '')}"
