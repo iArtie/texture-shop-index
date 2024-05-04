@@ -5,7 +5,7 @@ import re
 import requests
 
 folders_list = []
-url = re.search(r'(https?://\S+)', os.environ["BODY"])
+url = re.search(r'(https?://\S+)', os.environ["BODY"]).group(1)
 req = requests.get(url)
 # Open the ZIP file
 with zipfile.ZipFile(BytesIO(req.content)) as zip_ref:
